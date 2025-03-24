@@ -1,12 +1,12 @@
-from typing import Callable
+from collections.abc import Callable
 
 class State:
     def __init__(self, value: any):
         self._value = value
-        self.accumulated_cost = 0
+        # self.accumulated_cost = 0
 
-    def __repr__(self):
-        return self.value.__repr__()
+    def __str__(self):
+        return self.value.__str__()
     
     @property
     def value(self):
@@ -17,7 +17,7 @@ class State:
 
     def __eq__(self, other):
         return isinstance(other, State) and self._value == other._value
-    
+
 class Action:
     def __init__(self, action_name: str, action: Callable[[State], State], can_do_action: Callable[[State], bool], cost: int):
         self._action_name = action_name
@@ -33,5 +33,5 @@ class Action:
             raise RuntimeError('Cannot execute action')
         return self._action(current_state)
 
-    def __repr__(self):
+    def __str__(self):
         return self._action_name
