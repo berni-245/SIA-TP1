@@ -11,7 +11,7 @@ seaborn = "*"
 pygame = "*"
 jupyter = "*"
 appnope = "*"
-nutree = "*"
+anytree = "*"
 
 [dev-packages]
 
