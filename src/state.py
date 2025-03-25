@@ -6,7 +6,7 @@ class State:
         # self.accumulated_cost = 0
 
     def __str__(self):
-        return self.value.__str__()
+        return str(self.value)
     
     def __hash__(self):
         return hash(self.value)

@@ -4,16 +4,21 @@ from typing import List, Tuple
 from copy import deepcopy
 
 class SokobanFieldType(Enum):
-    AIR = ("Air"),
-    WALL = ("Wall"),
-    PLAYER = ("Player"),
-    BOX = ("Box"),
-    GOAL = ("Goal"),
-    PLAYER_ON_GOAL = ("Player On Goal"),
-    BOX_ON_GOAL = ("Box On Goal")
+    AIR = ("Air", "_")
+    WALL = ("Wall", "#")
+    PLAYER = ("Player", "O")
+    BOX = ("Box", "[]")
+    GOAL = ("Goal", "{}")
+    PLAYER_ON_GOAL = ("Player On Goal", "{O}")
+    BOX_ON_GOAL = ("Box On Goal", "{[]}")
 
-    def __init__(self, name: str):
-        self._name = name
+    def __init__(self, label: str, ascii_repr: str):
+        self._label = label
+        self._ascii_repr = ascii_repr
+
+    @property
+    def ascii_repr(self):
+        return self._ascii_repr
 
 class SokobanAction(Action, Enum):
     UP = (
@@ -45,8 +50,8 @@ class SokobanBoard(State):
     def __init__(self, board: List[List[SokobanFieldType]]):
         if not board or not all(isinstance(row, list) for row in board):
             raise ValueError("Board must be a 2D list of SokobanFieldType values")
-        self._player_pos: Tuple[int, int] = self._find_player()
         super().__init__(board)
+        self._player_pos: Tuple[int, int] = self._find_player()
     
     def get_field(self, row_index: int, col_index: int) -> SokobanFieldType:
         if not (0 <= row_index < len(self.value) and 0 <= col_index < len(self.value[row_index])):
@@ -71,11 +76,15 @@ class SokobanBoard(State):
         return SokobanBoard(to_return)
     
     def _find_player(self) -> Tuple[int, int]:
-        for row_index, row in enumerate(self._value):
+        for row_index, row in enumerate(self.value):
             for col_index, field in enumerate(row):
                 if field == SokobanFieldType.PLAYER or field == SokobanFieldType.PLAYER_ON_GOAL:
                     return (row_index, col_index)
         raise ValueError("No player was found")
+    
+    def __str__(self):
+        row_strings = [" ".join(field.ascii_repr.ljust(3) for field in row) for row in self.value]
+        return "\n".join(row_strings)
 
 
 class Sokoban:
@@ -91,7 +100,7 @@ class Sokoban:
 
     def next_board(self):
         if(not self.has_next_board()):
-            raise RuntimeError("There' no more boards available")
+            raise RuntimeError("There's no more boards available")
         self._index += 1
         self._current_board = self._boards_list[self._index]
         return self
