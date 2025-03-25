@@ -45,25 +45,37 @@ class SokobanBoard(State):
     def __init__(self, board: List[List[SokobanFieldType]]):
         if not board or not all(isinstance(row, list) for row in board):
             raise ValueError("Board must be a 2D list of SokobanFieldType values")
+        self._player_pos: Tuple[int, int] = self._find_player()
         super().__init__(board)
     
     def get_field(self, row_index: int, col_index: int) -> SokobanFieldType:
+        if not (0 <= row_index < len(self.value) and 0 <= col_index < len(self.value[row_index])):
+            return SokobanFieldType.WALL
+
         return self.value[row_index][col_index]
     
     def set_field(self, row_index: int, col_index: int, field: SokobanFieldType) -> None:
-        self.value[row_index][col_index] = field
+        if not (0 <= row_index < len(self.value) and 0 <= col_index < len(self.value[row_index])):
+            raise IndexError("Field position is out of bounds")
 
-    # REVISAR: Si es mejor tener constantemente actualizada la posición del jugador en una variable adicional.
-    def find_player(self) -> Tuple[int, int]:
+        if (field == SokobanFieldType.PLAYER or field == SokobanFieldType.PLAYER_ON_GOAL):
+            self._player_pos = (row_index, col_index)
+        self.value[row_index][col_index] = field
+    
+    @property
+    def player_pos(self):
+        return self._player_pos
+    
+    def get_hard_copy(self):
+        to_return: List[List[SokobanFieldType]] = deepcopy(self.value)
+        return SokobanBoard(to_return)
+    
+    def _find_player(self) -> Tuple[int, int]:
         for row_index, row in enumerate(self._value):
             for col_index, field in enumerate(row):
                 if field == SokobanFieldType.PLAYER or field == SokobanFieldType.PLAYER_ON_GOAL:
                     return (row_index, col_index)
         raise ValueError("No player was found")
-    
-    def get_hard_copy(self):
-        to_return: List[List[SokobanFieldType]] = deepcopy(self.value)
-        return SokobanBoard(to_return)
 
 
 class Sokoban:
@@ -89,14 +101,14 @@ class Sokoban:
         return action.execute(self._current_board)
         
     def get_board(self):
-        return self._current_board.get_hard_copy()
+        return self._current_board
     
     def set_current_board(self, new_board: SokobanBoard):
         self._current_board = new_board
         return self
     
 def generic_can_run_action(board: SokobanBoard, x_inc: int, y_inc: int) -> bool:
-    player_pos: Tuple = board.find_player()
+    player_pos: Tuple = board.player_pos
     field_incremented: SokobanFieldType = board.get_field(player_pos[0] + x_inc, player_pos[1] + y_inc)
     if(field_incremented == SokobanFieldType.WALL):
         return False
@@ -109,25 +121,26 @@ def generic_can_run_action(board: SokobanBoard, x_inc: int, y_inc: int) -> bool:
     return True
 
 def generic_transition_func(board: SokobanBoard, x_inc: int, y_inc: int) -> SokobanBoard:
-    player_pos: Tuple = board.find_player()
-    current_field: SokobanFieldType = board.get_field(*player_pos)
-    field_incremented: SokobanFieldType = board.get_field(player_pos[0] + x_inc, player_pos[1] + y_inc)
+    new_board = board.get_hard_copy()
+    player_pos: Tuple = new_board.player_pos
+    current_field: SokobanFieldType = new_board.get_field(*player_pos)
+    field_incremented: SokobanFieldType = new_board.get_field(player_pos[0] + x_inc, player_pos[1] + y_inc)
     
     if (current_field == SokobanFieldType.PLAYER_ON_GOAL):
-        board.set_field(player_pos[0], player_pos[1], SokobanFieldType.GOAL)
+        new_board.set_field(player_pos[0], player_pos[1], SokobanFieldType.GOAL)
     else:
-        board.set_field(player_pos[0], player_pos[1], SokobanFieldType.AIR)
+        new_board.set_field(player_pos[0], player_pos[1], SokobanFieldType.AIR)
     
     if (field_incremented == SokobanFieldType.AIR):
-        board.set_field(player_pos[0] + x_inc, player_pos[1] + y_inc, SokobanFieldType.PLAYER)
+        new_board.set_field(player_pos[0] + x_inc, player_pos[1] + y_inc, SokobanFieldType.PLAYER)
     else:
-        board.set_field(player_pos[0] + x_inc, player_pos[1] + y_inc, SokobanFieldType.PLAYER_ON_GOAL)
+        new_board.set_field(player_pos[0] + x_inc, player_pos[1] + y_inc, SokobanFieldType.PLAYER_ON_GOAL)
 
     if(field_incremented == SokobanFieldType.BOX or field_incremented == SokobanFieldType.BOX_ON_GOAL):
-        field_double_incremented: SokobanFieldType = board.get_field(player_pos[0] + 2*x_inc, player_pos[1] + 2*y_inc)
+        field_double_incremented: SokobanFieldType = new_board.get_field(player_pos[0] + 2*x_inc, player_pos[1] + 2*y_inc)
         if (field_double_incremented == SokobanFieldType.GOAL):
-            board.set_field(player_pos[0] + 2*x_inc, player_pos[1] + 2*y_inc, SokobanFieldType.BOX_ON_GOAL)
+            new_board.set_field(player_pos[0] + 2*x_inc, player_pos[1] + 2*y_inc, SokobanFieldType.BOX_ON_GOAL)
         else:
-            board.set_field(player_pos[0] + 2*x_inc, player_pos[1] + 2*y_inc, SokobanFieldType.BOX)
+            new_board.set_field(player_pos[0] + 2*x_inc, player_pos[1] + 2*y_inc, SokobanFieldType.BOX)
 
-    return board
+    return new_board
