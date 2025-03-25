@@ -23,28 +23,39 @@ class SokobanFieldType(Enum):
 class SokobanAction(Action, Enum):
     UP = (
         "Up action",
-        lambda board: generic_transition_func(board, 0, 1), 
-        lambda board: generic_can_run_action(board, 0, 1),
+        lambda board: generic_transition_func(board, SokobanDirection.UP), 
+        lambda board: generic_can_run_action(board, SokobanDirection.UP),
         1
     )
     DOWN = (
         "Down action",
-        lambda board: generic_transition_func(board, 0, -1), 
-        lambda board: generic_can_run_action(board, 0, -1),
+        lambda board: generic_transition_func(board, SokobanDirection.DOWN), 
+        lambda board: generic_can_run_action(board, SokobanDirection.DOWN),
         1
     )
     LEFT = (
         "Left action",
-        lambda board: generic_transition_func(board, -1, 0), 
-        lambda board: generic_can_run_action(board, -1, 0),
+        lambda board: generic_transition_func(board, SokobanDirection.LEFT), 
+        lambda board: generic_can_run_action(board, SokobanDirection.LEFT),
         1
     )
     RIGHT = (
         "Right action",
-        lambda board: generic_transition_func(board, 1, 0), 
-        lambda board: generic_can_run_action(board, 1, 0),
+        lambda board: generic_transition_func(board, SokobanDirection.RIGHT), 
+        lambda board: generic_can_run_action(board, SokobanDirection.RIGHT),
         1
     )
+
+    def __new__(cls, action_name, action, can_do_action, cost):
+        obj = object.__new__(cls)
+        obj._action_name = action_name
+        obj._action = action
+        obj._can_do_action = can_do_action
+        obj._cost = cost
+        return obj
+    
+    def __str__(self):
+        return self._action_name
     
 class SokobanBoard(State):
     def __init__(self, board: List[List[SokobanFieldType]]):
@@ -107,7 +118,9 @@ class Sokoban:
 
 
     def execute_action(self, action: SokobanAction):
-        return action.execute(self._current_board)
+        if (action.can_execute(self._current_board)):
+            self._current_board = action.execute(self._current_board)
+        return self
         
     def get_board(self):
         return self._current_board
@@ -116,7 +129,18 @@ class Sokoban:
         self._current_board = new_board
         return self
     
-def generic_can_run_action(board: SokobanBoard, x_inc: int, y_inc: int) -> bool:
+class SokobanDirection(Enum):
+    UP = (-1, 0)  
+    DOWN = (1, 0)  
+    LEFT = (0, -1)  
+    RIGHT = (0, 1)  
+
+    @property
+    def coordinates(self):
+        return self.value
+
+def generic_can_run_action(board: SokobanBoard, direction: SokobanDirection) -> bool:
+    x_inc, y_inc = direction.coordinates
     player_pos: Tuple = board.player_pos
     field_incremented: SokobanFieldType = board.get_field(player_pos[0] + x_inc, player_pos[1] + y_inc)
     if(field_incremented == SokobanFieldType.WALL):
@@ -129,7 +153,8 @@ def generic_can_run_action(board: SokobanBoard, x_inc: int, y_inc: int) -> bool:
             return False
     return True
 
-def generic_transition_func(board: SokobanBoard, x_inc: int, y_inc: int) -> SokobanBoard:
+def generic_transition_func(board: SokobanBoard, direction: SokobanDirection) -> SokobanBoard:
+    x_inc, y_inc = direction.coordinates
     new_board = board.get_hard_copy()
     player_pos: Tuple = new_board.player_pos
     current_field: SokobanFieldType = new_board.get_field(*player_pos)
@@ -140,7 +165,7 @@ def generic_transition_func(board: SokobanBoard, x_inc: int, y_inc: int) -> Soko
     else:
         new_board.set_field(player_pos[0], player_pos[1], SokobanFieldType.AIR)
     
-    if (field_incremented == SokobanFieldType.AIR):
+    if not (field_incremented == SokobanFieldType.GOAL or field_incremented == SokobanFieldType.BOX_ON_GOAL):
         new_board.set_field(player_pos[0] + x_inc, player_pos[1] + y_inc, SokobanFieldType.PLAYER)
     else:
         new_board.set_field(player_pos[0] + x_inc, player_pos[1] + y_inc, SokobanFieldType.PLAYER_ON_GOAL)

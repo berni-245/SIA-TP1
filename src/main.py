@@ -12,15 +12,30 @@ board_matrix: List[List[SokobanFieldType]] = [
 board: SokobanBoard = SokobanBoard(board_matrix)
 sokoban: Sokoban = Sokoban([board])
 
-print(sokoban.get_board())
+print(sokoban.get_board()
+      )
+print(SokobanAction.DOWN)
 sokoban.execute_action(SokobanAction.DOWN)
 print(sokoban.get_board())
+
+print(SokobanAction.LEFT)
 sokoban.execute_action(SokobanAction.LEFT)
 print(sokoban.get_board())
+
+print(SokobanAction.RIGHT)
 sokoban.execute_action(SokobanAction.RIGHT)
 print(sokoban.get_board())
+
+print(SokobanAction.UP)
 sokoban.execute_action(SokobanAction.UP)
 print(sokoban.get_board())
+
+print(SokobanAction.RIGHT)
 sokoban.execute_action(SokobanAction.RIGHT)
 print(sokoban.get_board())
+
+print(SokobanAction.DOWN)
 sokoban.execute_action(SokobanAction.DOWN)
+print(sokoban.get_board())
+
+
