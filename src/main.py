@@ -6,9 +6,9 @@ from algorithms import search_algorithm, bfs, dfs
 import sys
 sys.setrecursionlimit(10000)
     
-sokoban: Sokoban = Sokoban([board2])
+# sokoban: Sokoban = Sokoban([board2])
 
-result: Tuple[Node] = search_algorithm(
+result: Tuple[Node, ...] = search_algorithm(
     board2.board,
     board2.goals,
     [SokobanAction.UP, SokobanAction.DOWN, SokobanAction.LEFT, SokobanAction.RIGHT],

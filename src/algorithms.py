@@ -1,10 +1,10 @@
 from anytree import Node
-from typing import List, Tuple, Callable
+from typing import List, Sequence, Tuple, Callable
 from state import State, Action
 
 def search_algorithm(
-        initial_state: State, goals: List[State], actions: List[Action], sort_frontier_function: Callable[[Node], int]
-) -> Tuple[Node]:
+        initial_state: State, goals: Sequence[State], actions: Sequence[Action], sort_frontier_function: Callable[[Node], int]
+) -> Tuple[Node, ...]:
     frontier: List[Node] = []
     root_node = Node(initial_state)
     frontier.append(root_node)
@@ -30,8 +30,10 @@ def search_algorithm(
 
     return ()
 
+
 def bfs(node: Node):
     return len(node.path)
+
 
 def dfs(node: Node):
     return node.root.height + 1 - len(node.path)

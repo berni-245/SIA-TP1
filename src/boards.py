@@ -1,5 +1,4 @@
 from sokoban import SokobanFieldType, SokobanBoard
-from typing import List
 
 #----------------------------------------------------------------
 # BOARD 1
