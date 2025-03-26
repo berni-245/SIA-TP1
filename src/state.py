@@ -9,7 +9,8 @@ class State:
         return str(self.value)
     
     def __hash__(self):
-        return hash(self.value)
+        return hash(tuple(tuple(row) for row in self.value))
+
 
     def __eq__(self, other):
         return isinstance(other, State) and self.value == other.value

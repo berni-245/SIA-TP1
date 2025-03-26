@@ -46,6 +46,7 @@ class SokobanAction(Action, Enum):
         1
     )
 
+    # Special method for setting custom fields in enums
     def __new__(cls, action_name, action, can_do_action, cost):
         obj = object.__new__(cls)
         obj._action_name = action_name
