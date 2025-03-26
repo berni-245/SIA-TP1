@@ -1,13 +1,11 @@
-from typing import List, Tuple
+from typing import Tuple
 from anytree import Node
-from sokoban import Sokoban, SokobanBoard, SokobanAction, SokobanFieldType
+from sokoban import SokobanAction
 from boards import board2
-from algorithms import search_algorithm, bfs, dfs
+from algorithms import search_algorithm, bfs
 import sys
 sys.setrecursionlimit(10000)
     
-# sokoban: Sokoban = Sokoban([board2])
-
 result: Tuple[Node, ...] = search_algorithm(
     board2.board,
     board2.goals,
