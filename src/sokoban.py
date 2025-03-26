@@ -57,7 +57,7 @@ class SokobanAction(Action, Enum):
     
     def __str__(self):
         return self._action_name
-    
+
 class SokobanBoard(State):
     def __init__(self, board: List[List[SokobanFieldType]]):
         if not board or not all(isinstance(row, list) for row in board):
@@ -82,6 +82,9 @@ class SokobanBoard(State):
     @property
     def player_pos(self):
         return self._player_pos
+
+    def is_goal(self):
+        pass
     
     def get_hard_copy(self):
         to_return: List[List[SokobanFieldType]] = deepcopy(self.value)
@@ -99,37 +102,6 @@ class SokobanBoard(State):
         return "\n".join(row_strings)
 
 
-class Sokoban:
-    def __init__(self, boards_list: List[SokobanBoard]):
-        if len(boards_list) == 0:
-            raise RuntimeError("You must provide at least one board")
-        self._boards_list = boards_list
-        self._current_board: SokobanBoard = boards_list[0]
-        self._index = 0
-
-    def has_next_board(self) -> bool:
-        return self._index < len(self._boards_list) - 1
-
-    def next_board(self):
-        if(not self.has_next_board()):
-            raise RuntimeError("There's no more boards available")
-        self._index += 1
-        self._current_board = self._boards_list[self._index]
-        return self
-
-
-    def execute_action(self, action: SokobanAction):
-        if (action.can_execute(self._current_board)):
-            self._current_board = action.execute(self._current_board)
-        return self
-        
-    def get_board(self):
-        return self._current_board
-    
-    def set_current_board(self, new_board: SokobanBoard):
-        self._current_board = new_board
-        return self
-    
 class SokobanDirection(Enum):
     UP = (-1, 0)  
     DOWN = (1, 0)  
@@ -142,8 +114,8 @@ class SokobanDirection(Enum):
 
 def generic_can_run_action(board: SokobanBoard, direction: SokobanDirection) -> bool:
     x_inc, y_inc = direction.coordinates
-    player_pos: Tuple = board.player_pos
-    field_incremented: SokobanFieldType = board.get_field(player_pos[0] + x_inc, player_pos[1] + y_inc)
+    player_pos = board.player_pos
+    field_incremented = board.get_field(player_pos[0] + x_inc, player_pos[1] + y_inc)
     if(field_incremented == SokobanFieldType.WALL):
         return False
     

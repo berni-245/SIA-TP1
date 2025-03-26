@@ -1,8 +1,14 @@
 from collections.abc import Callable
+from typing import Any
+from abc import ABC, abstractmethod
 
-class State:
-    def __init__(self, value: any):
+class State(ABC):
+    def __init__(self, value: Any):
         self.value = value
+
+    @abstractmethod
+    def is_goal(self):
+        pass
 
     def __str__(self):
         return str(self.value)
