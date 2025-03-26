@@ -14,16 +14,24 @@ def search_algorithm(
         current_node: Node = frontier.pop(0)
         current_state: State = current_node.name
 
-        if current_state in visited:
-            continue
         visited.add(current_state)
 
         if current_state in goals:
-            return current_node.path()
+            return current_node.path
         for action in actions:
             if action.can_execute(current_state):
-                new_node = Node(action.execute(current_state), parent=current_node)
+                new_state = action.execute(current_state)
+                if new_state in visited:
+                    continue
+                new_node = Node(new_state, parent=current_node)
                 frontier.append(new_node)
+
         frontier.sort(key=sort_frontier_function)
 
     return ()
+
+def bfs(node: Node):
+    return len(node.path)
+
+def dfs(node: Node):
+    return node.root.height + 1 - len(node.path)
