@@ -1,40 +1,16 @@
 from typing import List, Tuple
 from anytree import Node
-from sokoban import Sokoban, SokobanBoard, SokobanFieldType, SokobanAction
+from sokoban import Sokoban, SokobanBoard, SokobanAction, SokobanFieldType
+from boards import board2
 from algorithms import search_algorithm, bfs, dfs
-
-board_matrix: List[List[SokobanFieldType]] = [
-    [SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.WALL],
-    [SokobanFieldType.WALL, SokobanFieldType.PLAYER, SokobanFieldType.AIR, SokobanFieldType.AIR, SokobanFieldType.WALL],
-    [SokobanFieldType.WALL, SokobanFieldType.AIR, SokobanFieldType.BOX, SokobanFieldType.AIR, SokobanFieldType.WALL],
-    [SokobanFieldType.WALL, SokobanFieldType.AIR, SokobanFieldType.AIR, SokobanFieldType.GOAL, SokobanFieldType.WALL],
-    [SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.WALL]
-]
-
-goal_matrix1: List[List[SokobanFieldType]] = [
-    [SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.WALL],
-    [SokobanFieldType.WALL, SokobanFieldType.AIR, SokobanFieldType.AIR, SokobanFieldType.AIR, SokobanFieldType.WALL],
-    [SokobanFieldType.WALL, SokobanFieldType.AIR, SokobanFieldType.AIR, SokobanFieldType.PLAYER, SokobanFieldType.WALL],
-    [SokobanFieldType.WALL, SokobanFieldType.AIR, SokobanFieldType.AIR, SokobanFieldType.BOX_ON_GOAL, SokobanFieldType.WALL],
-    [SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.WALL]
-]
-
-goal_matrix2: List[List[SokobanFieldType]] = [
-    [SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.WALL],
-    [SokobanFieldType.WALL, SokobanFieldType.AIR, SokobanFieldType.AIR, SokobanFieldType.AIR, SokobanFieldType.WALL],
-    [SokobanFieldType.WALL, SokobanFieldType.AIR, SokobanFieldType.AIR, SokobanFieldType.AIR, SokobanFieldType.WALL],
-    [SokobanFieldType.WALL, SokobanFieldType.AIR, SokobanFieldType.PLAYER, SokobanFieldType.BOX_ON_GOAL, SokobanFieldType.WALL],
-    [SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.WALL]
-]
+import sys
+sys.setrecursionlimit(10000)
     
-board: SokobanBoard = SokobanBoard(board_matrix)
-goal1: SokobanBoard = SokobanBoard(goal_matrix1)
-goal2: SokobanBoard = SokobanBoard(goal_matrix2)
-sokoban: Sokoban = Sokoban([board])
+sokoban: Sokoban = Sokoban([board2])
 
 result: Tuple[Node] = search_algorithm(
-    board,
-    [goal1, goal2],
+    board2.board,
+    board2.goals,
     [SokobanAction.UP, SokobanAction.DOWN, SokobanAction.LEFT, SokobanAction.RIGHT],
     bfs
 )
@@ -44,14 +20,14 @@ for i, node in enumerate(result):
     print(f"step: {i}")
     print(node.name, "\n")
 
-result: Tuple[Node] = search_algorithm(
-    board,
-    [goal1, goal2],
-    [SokobanAction.UP, SokobanAction.DOWN, SokobanAction.LEFT, SokobanAction.RIGHT],
-    dfs
-)
+# result: Tuple[Node] = search_algorithm(
+    # board2.board,
+    # board2.goals,
+    # [SokobanAction.UP, SokobanAction.DOWN, SokobanAction.LEFT, SokobanAction.RIGHT],
+    # dfs
+# )
 
-print("DFS:")
-for i, node in enumerate(result):
-    print(f"step: {i}")
-    print(node.name, "\n")
+# print("DFS:")
+# for i, node in enumerate(result):
+#     print(f"step: {i}")
+#     print(node.name, "\n")

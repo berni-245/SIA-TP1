@@ -3,7 +3,6 @@ from collections.abc import Callable
 class State:
     def __init__(self, value: any):
         self.value = value
-        # self.accumulated_cost = 0
 
     def __str__(self):
         return str(self.value)
