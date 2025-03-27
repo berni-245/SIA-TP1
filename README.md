@@ -37,6 +37,8 @@ Para correr el algoritmo deseado sobre el sokoban modificar la [configuración](
 ```sh
 pipenv run python src/main.py
 ```
+Se guardará el resultado en `result.txt`
+
 Para observar los gráficos sacados en _Jupyter Notebook_ correr:
 
 ```sh
