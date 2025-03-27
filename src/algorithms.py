@@ -203,5 +203,14 @@ def heuristic_no_dead(board: SokobanBoard) -> int:
 
     return heuristic_manhatan(board)
 
-def a_star(node: Node):
+def a_star_manhatan(node: Node):
+    return len(node.path) - 1 + heuristic_manhatan(node.name)
+
+def a_star_euclidean(node: Node):
     return len(node.path) - 1 + heuristic_euclidean(node.name)
+
+def a_star_manhatan_corners(node: Node):
+    return len(node.path) - 1 + heuristic_man_no_corners(node.name)
+
+def a_star_manhatan_no_dead(node: Node):
+    return len(node.path) - 1 + heuristic_no_dead(node.name)
