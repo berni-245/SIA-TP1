@@ -45,16 +45,6 @@ def dfs(node: Node):
 def greedy(node: Node):
     return heuristic_man_no_corners(node.name)
 
-def heuristic_test(board: SokobanBoard) -> int:
-    tot = 0
-    boxes = board.boxes.copy()
-    (px, py) = board.player_pos
-    for (bx, by) in boxes:
-        dist = abs(px - bx) + abs(py - by)
-        tot += dist
-
-    return tot
-
 def heuristic_manhatan(board: SokobanBoard) -> int:
     tot = 0
     boxes = board.boxes.copy()
@@ -89,9 +79,21 @@ def heuristic_euclidean(board: SokobanBoard) -> int:
     (px, py) = board.player_pos
     dists = np.empty(len(board.boxes))
     for (gx, gy) in board.goals:
+        goal_already_full = False
         for i, (bx, by) in enumerate(boxes):
-            dist = sqrt((abs(px - bx) + abs(py - by))**2 + (abs(bx - gx) + abs(by - gy))**2)
-            dists[i] = dist
+            g_to_b_dist = abs(bx - gx) + abs(by - gy)
+            if g_to_b_dist == 0:
+                goal_already_full = True
+                boxes.pop(i)
+                dists.resize(dists.shape[0] - 1, refcheck=False)
+                break
+            else:
+                dist = sqrt((abs(px - bx) + abs(py - by))**2 + (abs(bx - gx) + abs(by - gy))**2)
+                dists[i] = dist
+
+        if goal_already_full:
+            continue
+
         closest_idx = np.argmin(dists)
         tot += dists[closest_idx]
         boxes.pop(closest_idx)
@@ -202,4 +204,4 @@ def heuristic_no_dead(board: SokobanBoard) -> int:
     return heuristic_manhatan(board)
 
 def a_star(node: Node):
-    return len(node.path) - 1 + heuristic_manhatan(node.name)
+    return len(node.path) - 1 + heuristic_euclidean(node.name)
