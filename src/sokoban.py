@@ -1,16 +1,18 @@
+from sys import setprofile
 from state import State, Action
 from enum import Enum
 from typing import List, Tuple
 from copy import deepcopy
+import numpy as np
 
 class SokobanFieldType(Enum):
     AIR = ("Air", "_")
     WALL = ("Wall", "#")
-    PLAYER = ("Player", "O")
-    BOX = ("Box", "[]")
-    GOAL = ("Goal", "{}")
-    PLAYER_ON_GOAL = ("Player On Goal", "{O}")
-    BOX_ON_GOAL = ("Box On Goal", "{[]}")
+    PLAYER = ("Player", "o")
+    BOX = ("Box", "b")
+    GOAL = ("Goal", "g")
+    PLAYER_ON_GOAL = ("Player On Goal", "O")
+    BOX_ON_GOAL = ("Box On Goal", "B")
 
     def __init__(self, label: str, ascii_repr: str):
         self._label = label
@@ -58,15 +60,46 @@ class SokobanAction(Action, Enum):
     def __str__(self):
         return self._action_name
 
+
 class SokobanBoard(State):
-    def __init__(self, board: List[List[SokobanFieldType]], player_pos: Tuple[int, int], goals: List[Tuple[int, int]], boxes: List[Tuple[int, int]]):
+    def __init__(
+        self,
+        board: List[List[SokobanFieldType]],
+        player_pos: Tuple[int, int],
+        goals: List[Tuple[int, int]],
+        boxes: List[Tuple[int, int]]
+    ):
         super().__init__(board)
         self.player_pos = player_pos
         self.goals = goals
         self.boxes = boxes
 
     @classmethod
-    def board_builder(cls, board: List[List[SokobanFieldType]]):
+    def _parse_board_string(cls, board_str: str) -> List[List[SokobanFieldType]]:
+        lines = board_str.strip().split("\n")
+        matrix: List[List[SokobanFieldType]] = []
+        
+        for line in lines:
+            row = []
+            for char in line:
+                if char == ' ':
+                    row.append(SokobanFieldType.AIR)
+                elif char == 'p':
+                    row.append(SokobanFieldType.PLAYER)
+                elif char == 'b':
+                    row.append(SokobanFieldType.BOX)
+                elif char == 'g':
+                    row.append(SokobanFieldType.GOAL)
+                elif char == '#':
+                    row.append(SokobanFieldType.WALL)
+            
+            matrix.append(row)
+
+        return matrix
+
+
+    @classmethod
+    def _board_builder_inner(cls, board: List[List[SokobanFieldType]]):
         if not board or not all(isinstance(row, list) for row in board):
             raise ValueError("Board must be a 2D list of SokobanFieldType values")
         goals: List[Tuple[int, int]] = []
@@ -78,19 +111,24 @@ class SokobanBoard(State):
                     goals.append((x_index, y_index))
 
                 if field == SokobanFieldType.PLAYER or field == SokobanFieldType.PLAYER_ON_GOAL:
-                    player_pos: Tuple[int, int] = (x_index, y_index)
+                  player_pos: Tuple[int, int] = (x_index, y_index)
 
                 if field == SokobanFieldType.BOX or field == SokobanFieldType.BOX_ON_GOAL:
-                    boxes.append((x_index, y_index))
+                  boxes.append((x_index, y_index))
 
                 if field == SokobanFieldType.BOX_ON_GOAL or field == SokobanFieldType.PLAYER_ON_GOAL: 
                     board[x_index][y_index] = SokobanFieldType.GOAL 
                 elif field != SokobanFieldType.WALL and field != SokobanFieldType.GOAL:
                     board[x_index][y_index] = SokobanFieldType.AIR
         return cls(board, player_pos, goals, boxes)
+
+    @classmethod
+    def board_builder(cls, board_str: str):
+        return SokobanBoard._board_builder_inner(SokobanBoard._parse_board_string(board_str))
                     
 
     def is_goal(self) -> bool:
+        # return self.goals == self.boxes
         return set(self.goals) == set(self.boxes)
     
     def get_field(self, row_index: int, col_index: int) -> SokobanFieldType:
@@ -144,9 +182,6 @@ class SokobanBoard(State):
         return isinstance(other, SokobanBoard) and \
         self.player_pos == other.player_pos and \
         set(self.boxes) == set(other.boxes)
-
-    
-
 
 
 class SokobanDirection(Enum):
