@@ -33,15 +33,9 @@ para instalar las dependencias necesarias en el ambiente virtual
 
 ## Ejecución
 
-Para correr el algoritmo deseado sobre el sokoban modificar la [configuración](configs/config.json), especificando el método de búsqueda deseado (BFS, DFS, Greedy, A*), el board (board1, board2, board3, board4); y finalmente correr:
+Para correr el algoritmo deseado sobre el sokoban modificar la [configuración](configs/config.json), especificando el método de búsqueda deseado (BFS, DFS, Greedy_\<heuristic>, A*_\<heuristic>), el board (board1, board2, board3, board4)
+Para el caso de greedy y a* **hay** que reemplazar \<heuristic> por una de las siguientes opciones (euc/man/no_corners/no_dead)
 ```sh
 pipenv run python src/main.py
 ```
 Se guardará el resultado en `result.txt`
-
-Para observar los gráficos sacados en _Jupyter Notebook_ correr:
-
-```sh
-pipenv run jupyter notebook
-```
-Finalmente, abrir el archivo `main.ipynb`

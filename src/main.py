@@ -1,7 +1,7 @@
 from typing import Tuple
 from anytree import Node
 from sokoban import SokobanAction, SokobanBoard
-from algorithms import search_algorithm, dfs, bfs, greedy, a_star
+from algorithms import search_algorithm, dfs, bfs, greedy_euc, greedy_man, greedy_corners, greedy_no_dead, a_star_euclidean, a_star_manhatan, a_star_manhatan_corners, a_star_manhatan_no_dead
 import sys
 import json
 import time
@@ -9,8 +9,14 @@ sys.setrecursionlimit(10000)
 
 algorithms = {"bfs": bfs,
               "dfs": dfs,
-              "greedy": greedy,
-              "a*": a_star
+              "greedy_euc": greedy_euc,
+              "greedy_man": greedy_man,
+              "greedy_no_corners": greedy_corners,
+              "greedy_no_dead": greedy_no_dead,
+              "a*_euc": a_star_euclidean,
+              "a*_man": a_star_manhatan,
+              "a*_no_corners": a_star_manhatan_corners,
+              "a*_no_dead": a_star_manhatan_no_dead,
               }
 
 
