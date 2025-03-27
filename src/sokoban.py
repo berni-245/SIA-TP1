@@ -82,9 +82,9 @@ class SokobanBoard(State):
         for line in lines:
             row = []
             for char in line:
-                if char == ' ':
+                if char == '_':
                     row.append(SokobanFieldType.AIR)
-                elif char == 'p':
+                elif char == 'o':
                     row.append(SokobanFieldType.PLAYER)
                 elif char == 'b':
                     row.append(SokobanFieldType.BOX)

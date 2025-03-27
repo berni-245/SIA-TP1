@@ -1,58 +1,33 @@
-from sokoban import SokobanFieldType, SokobanBoard
+from sokoban import SokobanBoard
 
 #----------------------------------------------------------------
 # BOARD 1
 
-class SokobanInfoBoard:
-    def __init__(self, initial_board, goal_boards):
-        self.board = initial_board
-        self.goals = goal_boards
-
-board1_matrix = [
-    [SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.WALL],
-    [SokobanFieldType.WALL, SokobanFieldType.PLAYER, SokobanFieldType.AIR, SokobanFieldType.AIR, SokobanFieldType.WALL],
-    [SokobanFieldType.WALL, SokobanFieldType.AIR, SokobanFieldType.BOX, SokobanFieldType.AIR, SokobanFieldType.WALL],
-    [SokobanFieldType.WALL, SokobanFieldType.AIR, SokobanFieldType.AIR, SokobanFieldType.GOAL, SokobanFieldType.WALL],
-    [SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.WALL]
-]
-
-
-
-board1 = SokobanBoard.board_builder(board1_matrix)
+with open("boards/board1.txt", "r") as f:
+    content = f.read()
+board1 = SokobanBoard.board_builder(content)
 
 #----------------------------------------------------------------
 # BOARD 2
 
-board2_matrix = [
-    
-    [SokobanFieldType.AIR,  SokobanFieldType.AIR,  SokobanFieldType.AIR, SokobanFieldType.AIR, SokobanFieldType.AIR, SokobanFieldType.AIR, SokobanFieldType.WALL,  SokobanFieldType.WALL,  SokobanFieldType.WALL],
-    
-    [SokobanFieldType.AIR,  SokobanFieldType.AIR,  SokobanFieldType.AIR, SokobanFieldType.AIR, SokobanFieldType.AIR, SokobanFieldType.AIR, SokobanFieldType.WALL,  SokobanFieldType.GOAL,  SokobanFieldType.WALL],
-    
-    [SokobanFieldType.AIR, SokobanFieldType.AIR, SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.GOAL, SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.WALL],
-    
-    [SokobanFieldType.AIR, SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.AIR,  SokobanFieldType.AIR,  SokobanFieldType.AIR,  SokobanFieldType.AIR,  SokobanFieldType.AIR,  SokobanFieldType.AIR,  SokobanFieldType.AIR, SokobanFieldType.AIR, SokobanFieldType.AIR,  SokobanFieldType.WALL, SokobanFieldType.WALL],
-    
-    [SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.AIR, SokobanFieldType.AIR,  SokobanFieldType.WALL,  SokobanFieldType.AIR,  SokobanFieldType.WALL,  SokobanFieldType.AIR,  SokobanFieldType.WALL,  SokobanFieldType.AIR,  SokobanFieldType.WALL, SokobanFieldType.AIR, SokobanFieldType.AIR, SokobanFieldType.WALL, SokobanFieldType.WALL],
-    
-    [SokobanFieldType.WALL, SokobanFieldType.AIR,  SokobanFieldType.AIR,  SokobanFieldType.WALL,  SokobanFieldType.WALL,  SokobanFieldType.AIR,  SokobanFieldType.AIR,  SokobanFieldType.AIR, SokobanFieldType.AIR, SokobanFieldType.AIR, SokobanFieldType.WALL, SokobanFieldType.WALL,  SokobanFieldType.AIR,  SokobanFieldType.AIR,  SokobanFieldType.WALL],
-    
-    [SokobanFieldType.WALL, SokobanFieldType.AIR,  SokobanFieldType.WALL,  SokobanFieldType.WALL,  SokobanFieldType.AIR,  SokobanFieldType.AIR,  SokobanFieldType.WALL,  SokobanFieldType.AIR,  SokobanFieldType.WALL,  SokobanFieldType.AIR, SokobanFieldType.AIR, SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.AIR, SokobanFieldType.WALL],
-    
-    [SokobanFieldType.WALL, SokobanFieldType.AIR,  SokobanFieldType.AIR,  SokobanFieldType.AIR, SokobanFieldType.AIR, SokobanFieldType.AIR, SokobanFieldType.BOX,  SokobanFieldType.PLAYER,  SokobanFieldType.BOX,  SokobanFieldType.AIR,  SokobanFieldType.AIR,  SokobanFieldType.AIR, SokobanFieldType.AIR, SokobanFieldType.AIR, SokobanFieldType.WALL],
-    
-    [SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.AIR, SokobanFieldType.AIR,  SokobanFieldType.WALL,  SokobanFieldType.WALL,  SokobanFieldType.WALL,  SokobanFieldType.AIR, SokobanFieldType.AIR, SokobanFieldType.WALL,  SokobanFieldType.WALL, SokobanFieldType.WALL, SokobanFieldType.WALL],
-    
-    [SokobanFieldType.AIR,  SokobanFieldType.AIR, SokobanFieldType.AIR, SokobanFieldType.WALL,  SokobanFieldType.WALL,  SokobanFieldType.WALL,  SokobanFieldType.WALL, SokobanFieldType.AIR,  SokobanFieldType.WALL,  SokobanFieldType.WALL,  SokobanFieldType.WALL, SokobanFieldType.WALL]
-]
-
-board2 = SokobanBoard.board_builder(board2_matrix)
+with open("boards/board2.txt", "r") as f:
+    content2 = f.read()
+board2 = SokobanBoard.board_builder(content2)
 
 #----------------------------------------------------------------
 # BOARD 3
 
+with open("boards/board3.txt", "r") as f:
+    content3 = f.read()
+board3 = SokobanBoard.board_builder(content3)
+
+
 #----------------------------------------------------------------
 # BOARD 4
+
+with open("boards/board4.txt", "r") as f:
+    content4 = f.read()
+board4 = SokobanBoard.board_builder(content4)
 
 #----------------------------------------------------------------
 # BOARD 5
