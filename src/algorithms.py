@@ -3,7 +3,7 @@ from typing import List, Sequence, Tuple, Callable
 from state import State, Action
 
 def search_algorithm(
-        initial_state: State, goals: Sequence[State], actions: Sequence[Action], sort_frontier_function: Callable[[Node], int]
+        initial_state: State, actions: Sequence[Action], sort_frontier_function: Callable[[Node], int]
 ) -> Tuple[Node, ...]:
     frontier: List[Node] = []
     root_node = Node(initial_state)
@@ -16,7 +16,7 @@ def search_algorithm(
 
         visited.add(current_state)
 
-        if current_state in goals:
+        if current_state.is_goal():
             return current_node.path
         for action in actions:
             if action.can_execute(current_state):

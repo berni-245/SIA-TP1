@@ -7,18 +7,18 @@ class State(ABC):
         self.value = value
 
     @abstractmethod
-    def is_goal(self):
+    def is_goal(self) -> bool:
         pass
 
     def __str__(self):
         return str(self.value)
     
     def __hash__(self):
-        return hash(tuple(tuple(row) for row in self.value))
+        raise NotImplementedError("The class inherited from State must implement __hash__")
 
 
     def __eq__(self, other):
-        return isinstance(other, State) and self.value == other.value
+        raise NotImplementedError("The class inherited from State must implement __eq__")
 
 class Action:
     def __init__(self, action_name: str, action: Callable[[State], State], can_do_action: Callable[[State], bool], cost: int):
