@@ -1,4 +1,4 @@
 {
     "board": "board1",
-    "algorithm": "bfs"
+    "algorithm": "a*"
 }

@@ -33,7 +33,7 @@ para instalar las dependencias necesarias en el ambiente virtual
 
 ## Ejecución
 
-Para correr el algoritmo deseado sobre el sokoban modificar la [configuración](configs/config.json), especificando el método de búsqueda deseado (BFS, DFS, Greedy, A*), finalmente correr:
+Para correr el algoritmo deseado sobre el sokoban modificar la [configuración](configs/config.json), especificando el método de búsqueda deseado (BFS, DFS, Greedy, A*), el board (board1, board2, board3, board4); y finalmente correr:
 ```sh
 pipenv run python src/main.py
 ```
