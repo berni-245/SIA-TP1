@@ -150,26 +150,27 @@ class SokobanBoard(State):
 
     
     def __str__(self):
+        white_space = 1
         row_strings = []
         for x_idx, row in enumerate(self.value):
             formatted_row = []
             for y_idx, field in enumerate(row):              
                 if ((x_idx, y_idx) in self.goals and (x_idx, y_idx) == self.player_pos):
-                    formatted_row.append(SokobanFieldType.PLAYER_ON_GOAL.ascii_repr.ljust(3))    
+                    formatted_row.append(SokobanFieldType.PLAYER_ON_GOAL.ascii_repr.ljust(white_space))    
                     continue
 
                 if ((x_idx, y_idx) in self.goals and (x_idx, y_idx) in self.boxes):
-                    formatted_row.append(SokobanFieldType.BOX_ON_GOAL.ascii_repr.ljust(3))    
+                    formatted_row.append(SokobanFieldType.BOX_ON_GOAL.ascii_repr.ljust(white_space))    
                     continue
 
                 if (x_idx, y_idx) == self.player_pos:
-                    formatted_row.append(SokobanFieldType.PLAYER.ascii_repr.ljust(3))    
+                    formatted_row.append(SokobanFieldType.PLAYER.ascii_repr.ljust(white_space))
                 elif (x_idx, y_idx) in self.boxes:
-                    formatted_row.append(SokobanFieldType.BOX.ascii_repr.ljust(3))    
+                    formatted_row.append(SokobanFieldType.BOX.ascii_repr.ljust(white_space))
                 elif (x_idx, y_idx) in self.goals:
-                    formatted_row.append(field.ascii_repr.ljust(3))
+                    formatted_row.append(field.ascii_repr.ljust(white_space))
                 else:
-                    formatted_row.append(field.ascii_repr.ljust(3))
+                    formatted_row.append(field.ascii_repr.ljust(white_space))
             
             row_strings.append(" ".join(formatted_row))
         return "\n".join(row_strings)
