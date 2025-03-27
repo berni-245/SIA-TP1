@@ -59,28 +59,33 @@ class SokobanAction(Action, Enum):
         return self._action_name
 
 class SokobanBoard(State):
-    def __init__(self, board: List[List[SokobanFieldType]]):
+    def __init__(self, board: List[List[SokobanFieldType]], player_pos: Tuple[int, int], goals: List[Tuple[int, int]], boxes: List[Tuple[int, int]]):
+        super().__init__(board)
+        self.player_pos = player_pos
+        self.goals = goals
+        self.boxes = boxes
+
+    @classmethod
+    def board_builder(cls, board: List[List[SokobanFieldType]]):
         if not board or not all(isinstance(row, list) for row in board):
             raise ValueError("Board must be a 2D list of SokobanFieldType values")
-        super().__init__(board)
-        self.goals: List[Tuple[int, int]] = []
-        self.boxes: List[Tuple[int, int]] = []
-        for x_index, row in enumerate(self.value):
+        goals: List[Tuple[int, int]] = []
+        boxes: List[Tuple[int, int]] = []
+        player_pos = (0, 0)
+        for x_index, row in enumerate(board):
             for y_index, field in enumerate(row):
                 if field == SokobanFieldType.GOAL or field == SokobanFieldType.BOX_ON_GOAL or field == SokobanFieldType.PLAYER_ON_GOAL:
-                    self.goals.append((x_index, y_index))
-                    if field == SokobanFieldType.GOAL:
-                        self.set_field(x_index, y_index, SokobanFieldType.AIR)
+                    goals.append((x_index, y_index))
 
                 if field == SokobanFieldType.PLAYER or field == SokobanFieldType.PLAYER_ON_GOAL:
-                    self._player_pos: Tuple[int, int] = (x_index, y_index)
-                    if field == SokobanFieldType.PLAYER_ON_GOAL:
-                        self.set_field(x_index, y_index, SokobanFieldType.PLAYER)
+                    player_pos: Tuple[int, int] = (x_index, y_index)
 
                 if field == SokobanFieldType.BOX or field == SokobanFieldType.BOX_ON_GOAL:
-                    self.boxes.append((x_index, y_index))
-                    if field == SokobanFieldType.BOX_ON_GOAL:
-                        self.set_field(x_index, y_index, SokobanFieldType.BOX)
+                    boxes.append((x_index, y_index))
+
+                if field != SokobanFieldType.WALL:
+                    board[x_index][y_index] = SokobanFieldType.AIR
+        return cls(board, player_pos, goals, boxes)
                     
 
     def is_goal(self) -> bool:
@@ -92,39 +97,50 @@ class SokobanBoard(State):
 
         return self.value[row_index][col_index]
     
-    def set_field(self, row_index: int, col_index: int, field: SokobanFieldType) -> None:
-        if not (0 <= row_index < len(self.value) and 0 <= col_index < len(self.value[row_index])):
-            raise IndexError("Field position is out of bounds")
-
-        if (field == SokobanFieldType.PLAYER or field == SokobanFieldType.PLAYER_ON_GOAL):
-            self._player_pos = (row_index, col_index)
-        self.value[row_index][col_index] = field
+    def update_player_pos(self, new_player_pos: Tuple[int, int]):
+        self.player_pos = new_player_pos
 
     def update_box_position(self, original_position: Tuple[int, int], new_position: Tuple[int, int]):
         index = self.boxes.index(original_position) 
         self.boxes[index] = new_position
         return
-    
-    @property
-    def player_pos(self):
-        return self._player_pos
 
-    def get_hard_copy(self):
-        to_return: List[List[SokobanFieldType]] = deepcopy(self.value)
-        new_board = SokobanBoard(to_return)
-        new_board.goals = deepcopy(self.goals)
-        return new_board
+    def get_hard_copy(self):        
+        return SokobanBoard(self.value, self.player_pos, deepcopy(self.goals), deepcopy(self.boxes))
+
     
     def __str__(self):
-        row_strings = [" ".join(field.ascii_repr.ljust(3) for field in row) for row in self.value]
+        row_strings = []
+        for x_idx, row in enumerate(self.value):
+            formatted_row = []
+            for y_idx, field in enumerate(row):              
+                if ((x_idx, y_idx) in self.goals and (x_idx, y_idx) == self.player_pos):
+                    formatted_row.append(SokobanFieldType.PLAYER_ON_GOAL.ascii_repr.ljust(3))    
+                    continue
+
+                if ((x_idx, y_idx) in self.goals and (x_idx, y_idx) in self.boxes):
+                    formatted_row.append(SokobanFieldType.BOX_ON_GOAL.ascii_repr.ljust(3))    
+                    continue
+
+                if (x_idx, y_idx) == self.player_pos:
+                    formatted_row.append(SokobanFieldType.PLAYER.ascii_repr.ljust(3))    
+                elif (x_idx, y_idx) in self.boxes:
+                    formatted_row.append(SokobanFieldType.BOX.ascii_repr.ljust(3))    
+                elif (x_idx, y_idx) in self.goals:
+                    formatted_row.append(field.ascii_repr.ljust(3))
+                else:
+                    formatted_row.append(field.ascii_repr.ljust(3))
+            
+            row_strings.append(" ".join(formatted_row))
         return "\n".join(row_strings)
+
     
     def __hash__(self):
-        return hash((self._player_pos, frozenset(self.boxes)))
+        return hash((self.player_pos, frozenset(self.boxes)))
 
     def __eq__(self, other):
         return isinstance(other, SokobanBoard) and \
-        self._player_pos == other._player_pos and \
+        self.player_pos == other.player_pos and \
         set(self.boxes) == set(other.boxes)
 
     
@@ -144,30 +160,30 @@ class SokobanDirection(Enum):
 def generic_can_run_action(board: SokobanBoard, direction: SokobanDirection) -> bool:
     x_inc, y_inc = direction.coordinates
     player_pos = board.player_pos
-    field_incremented = board.get_field(player_pos[0] + x_inc, player_pos[1] + y_inc)
+    inc_player_pos = (player_pos[0] + x_inc, player_pos[1] + y_inc)
+    field_incremented = board.get_field(*inc_player_pos)
     if(field_incremented == SokobanFieldType.WALL):
         return False
     
     # If there's a box, verify that the player can actually move the box
-    if(field_incremented == SokobanFieldType.BOX):
-        field_double_incremented: SokobanFieldType = board.get_field(player_pos[0] + 2*x_inc, player_pos[1] + 2*y_inc)
-        if not (field_double_incremented == SokobanFieldType.AIR):
+    if(inc_player_pos in board.boxes):
+        double_inc_player_post = (player_pos[0] + 2*x_inc, player_pos[1] + 2*y_inc)
+        field_double_incremented: SokobanFieldType = board.get_field(*double_inc_player_post)
+        if (field_double_incremented == SokobanFieldType.WALL or double_inc_player_post in board.boxes):
             return False
+        
     return True
 
 def generic_transition_func(board: SokobanBoard, direction: SokobanDirection) -> SokobanBoard:
     x_inc, y_inc = direction.coordinates
     new_board = board.get_hard_copy()
-    player_pos: Tuple = new_board.player_pos
-    field_incremented: SokobanFieldType = new_board.get_field(player_pos[0] + x_inc, player_pos[1] + y_inc)
-    
-    new_board.set_field(player_pos[0], player_pos[1], SokobanFieldType.AIR)
-    
-    new_board.set_field(player_pos[0] + x_inc, player_pos[1] + y_inc, SokobanFieldType.PLAYER)
+    player_pos = new_board.player_pos
+    inc_player_pos = (player_pos[0] + x_inc, player_pos[1] + y_inc)
 
-    if(field_incremented == SokobanFieldType.BOX):
-        new_board.set_field(player_pos[0] + 2*x_inc, player_pos[1] + 2*y_inc, SokobanFieldType.BOX)
-        new_board.update_box_position((player_pos[0] + x_inc, player_pos[1] + y_inc), (player_pos[0] + 2*x_inc, player_pos[1] + 2*y_inc))
+    new_board.update_player_pos(inc_player_pos)
 
+    if(inc_player_pos in new_board.boxes):
+        double_inc_player_post = (player_pos[0] + 2*x_inc, player_pos[1] + 2*y_inc)
+        new_board.update_box_position(inc_player_pos, double_inc_player_post)
 
     return new_board
