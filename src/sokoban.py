@@ -83,7 +83,9 @@ class SokobanBoard(State):
                 if field == SokobanFieldType.BOX or field == SokobanFieldType.BOX_ON_GOAL:
                     boxes.append((x_index, y_index))
 
-                if field != SokobanFieldType.WALL:
+                if field == SokobanFieldType.BOX_ON_GOAL or field == SokobanFieldType.PLAYER_ON_GOAL: 
+                    board[x_index][y_index] = SokobanFieldType.GOAL 
+                elif field != SokobanFieldType.WALL and field != SokobanFieldType.GOAL:
                     board[x_index][y_index] = SokobanFieldType.AIR
         return cls(board, player_pos, goals, boxes)
                     
