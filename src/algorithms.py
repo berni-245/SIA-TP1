@@ -42,8 +42,14 @@ def bfs(node: Node):
 def dfs(node: Node):
     return node.root.height + 1 - len(node.path)
 
-def greedy(node: Node):
+def greedy_man(node: Node):
+    return heuristic_manhatan(node.name)
+def greedy_euc(node: Node):
+    return heuristic_euclidean(node.name)
+def greedy_corners(node: Node):
     return heuristic_man_no_corners(node.name)
+def greedy_no_dead(node: Node):
+    return heuristic_no_dead(node.name)
 
 def heuristic_manhatan(board: SokobanBoard) -> int:
     tot = 0
