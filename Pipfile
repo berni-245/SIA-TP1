@@ -12,6 +12,7 @@ pygame = "*"
 jupyter = "*"
 appnope = "*"
 anytree = "*"
+sortedcontainers = "*"
 
 [dev-packages]
 
