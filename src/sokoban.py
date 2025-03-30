@@ -1,9 +1,8 @@
-from sys import setprofile
-from state import State, Action
 from enum import Enum
 from typing import List, Tuple
 from copy import deepcopy
-import numpy as np
+
+from src.state import State, Action
 
 class SokobanFieldType(Enum):
     AIR = ("Air", "_")

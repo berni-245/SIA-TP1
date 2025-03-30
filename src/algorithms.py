@@ -1,11 +1,11 @@
 from math import sqrt
 from anytree import Node
 from typing import Sequence, Tuple, Callable
-
-from sokoban import SokobanBoard, SokobanFieldType as SF
-from state import State, Action
 from sortedcontainers import SortedList
 import numpy as np
+
+from src.sokoban import SokobanBoard, SokobanFieldType as SF
+from src.state import State, Action
 
 def search_algorithm(
         initial_state: State, actions: Sequence[Action], sort_frontier_function: Callable[[Node], int]
@@ -220,3 +220,16 @@ def a_star_manhatan_corners(node: Node):
 
 def a_star_manhatan_no_dead(node: Node):
     return len(node.path) - 1 + heuristic_no_dead(node.name)
+
+algorithms = {
+    "bfs": bfs,
+    "dfs": dfs,
+    "greedy_euc": greedy_euc,
+    "greedy_man": greedy_man,
+    "greedy_no_corners": greedy_corners,
+    "greedy_no_dead": greedy_no_dead,
+    "a*_euc": a_star_euclidean,
+    "a*_man": a_star_manhatan,
+    "a*_no_corners": a_star_manhatan_corners,
+    "a*_no_dead": a_star_manhatan_no_dead,
+}
