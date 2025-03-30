@@ -76,13 +76,13 @@ class SokobanBoard(State):
 
     @classmethod
     def _parse_board_string(cls, board_str: str) -> List[List[SokobanFieldType]]:
-        lines = board_str.strip().split("\n")
+        lines = [line.rstrip() for line in board_str.split("\n")]
         matrix: List[List[SokobanFieldType]] = []
         
         for line in lines:
             row = []
             for char in line:
-                if char == '_':
+                if char == ' ' or char == '_':
                     row.append(SokobanFieldType.AIR)
                 elif char == 'o':
                     row.append(SokobanFieldType.PLAYER)
