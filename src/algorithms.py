@@ -182,102 +182,102 @@ def heuristic_euclidean(board: SokobanBoard) -> int:
 large_value = 99999
 def heuristic_man_no_corners(board: SokobanBoard) -> int:
     for (br, bc) in board.boxes:
-        up_field = board.get_field(br - 1, bc)
-        down_field = board.get_field(br + 1, bc)
-        left_field = board.get_field(br, bc - 1)
-        right_field = board.get_field(br, bc + 1)
-        # print('up', up_field)
-        # print('down', down_field)
-        # print('left', left_field)
-        # print('right', right_field)
-        if  up_field == SF.WALL and (left_field == SF.WALL or right_field == SF.WALL):
-            return large_value
-        elif  down_field == SF.WALL and (left_field == SF.WALL or right_field == SF.WALL):
-            return large_value
+        box_field = board.get_field(br, bc)
+        if not box_field == SF.GOAL:
+            up_field = board.get_field(br - 1, bc)
+            down_field = board.get_field(br + 1, bc)
+            left_field = board.get_field(br, bc - 1)
+            right_field = board.get_field(br, bc + 1)
+            if  up_field == SF.WALL and (left_field == SF.WALL or right_field == SF.WALL):
+                return large_value
+            elif  down_field == SF.WALL and (left_field == SF.WALL or right_field == SF.WALL):
+                return large_value
 
     return heuristic_manhatan(board)
 
 
 def heuristic_no_dead(board: SokobanBoard) -> int:
     for (br, bc) in board.boxes:
-        up_field = board.get_field(br - 1, bc)
-        down_field = board.get_field(br + 1, bc)
-        left_field = board.get_field(br, bc - 1)
-        right_field = board.get_field(br, bc + 1)
-        # print('up', up_field)
-        # print('down', down_field)
-        # print('left', left_field)
-        # print('right', right_field)
-        if  up_field == SF.WALL and (left_field == SF.WALL or right_field == SF.WALL):
-            return large_value
-        elif  down_field == SF.WALL and (left_field == SF.WALL or right_field == SF.WALL):
-            return large_value
+        box_field = board.get_field(br, bc)
+        if not box_field == SF.GOAL:
+            up_field = board.get_field(br - 1, bc)
+            down_field = board.get_field(br + 1, bc)
+            left_field = board.get_field(br, bc - 1)
+            right_field = board.get_field(br, bc + 1)
+            # print('up', up_field)
+            # print('down', down_field)
+            # print('left', left_field)
+            # print('right', right_field)
+            if up_field == SF.WALL and (left_field == SF.WALL or right_field == SF.WALL):
+                return large_value
+            elif  down_field == SF.WALL and (left_field == SF.WALL or right_field == SF.WALL):
+                return large_value
 
-        wall_lim_0: int
-        wall_lim_1: int
-        is_valid: bool = True
-        if up_field == SF.WALL or down_field == SF.WALL:
-            is_valid = False
-            col = bc
-            while True:
-                col -= 1
-                field = board.get_field(br, col)
-                if field == SF.WALL:
-                    wall_lim_0 = col
-                    break
-                elif field == SF.GOAL:
-                    is_valid = True
-            if not is_valid:
+            wall_lim_0: int
+            wall_lim_1: int
+            is_valid: bool = True
+            if up_field == SF.WALL or down_field == SF.WALL:
+                is_valid = False
                 col = bc
                 while True:
-                    col += 1
+                    col -= 1
                     field = board.get_field(br, col)
                     if field == SF.WALL:
-                        wall_lim_1 = col
+                        wall_lim_0 = col
                         break
                     elif field == SF.GOAL:
                         is_valid = True
-                # print('lims: ', wall_lim_0, wall_lim_1)
-                # print('valid: ', is_valid)
                 if not is_valid:
-                    dy = -1 if up_field == SF.WALL else 1
-                    # print('dy', dy)
-                    for col in range(wall_lim_0 + 1, wall_lim_1 - 1):
-                        field = board.get_field(br + dy, col)
-                        if field != SF.WALL:
-                            is_valid = True
+                    col = bc
+                    while True:
+                        col += 1
+                        field = board.get_field(br, col)
+                        if field == SF.WALL:
+                            wall_lim_1 = col
                             break
-        if left_field == SF.WALL or right_field == SF.WALL:
-            is_valid = False
-            col = br
-            while True:
-                col -= 1
-                field = board.get_field(col, bc)
-                if field == SF.WALL:
-                    wall_lim_0 = col
-                    break
-                elif field == SF.GOAL:
-                    is_valid = True
-            if not is_valid:
+                        elif field == SF.GOAL:
+                            is_valid = True
+                    # print('lims: ', wall_lim_0, wall_lim_1)
+                    # print('valid: ', is_valid)
+                    if not is_valid:
+                        dy = -1 if up_field == SF.WALL else 1
+                        # print('dy', dy)
+                        for col in range(wall_lim_0 + 1, wall_lim_1 - 1):
+                            field = board.get_field(br + dy, col)
+                            if field != SF.WALL:
+                                is_valid = True
+                                break
+            if left_field == SF.WALL or right_field == SF.WALL:
+                is_valid = False
                 col = br
                 while True:
-                    col += 1
+                    col -= 1
                     field = board.get_field(col, bc)
                     if field == SF.WALL:
-                        wall_lim_1 = col
+                        wall_lim_0 = col
                         break
                     elif field == SF.GOAL:
                         is_valid = True
                 if not is_valid:
-                    dy = -1 if left_field == SF.WALL else 1
-                    for row in range(wall_lim_0 + 1, wall_lim_1 - 1):
-                        field = board.get_field(row, bc + dy)
-                        if field != SF.WALL:
-                            is_valid = True
+                    col = br
+                    while True:
+                        col += 1
+                        field = board.get_field(col, bc)
+                        if field == SF.WALL:
+                            wall_lim_1 = col
                             break
-        # print(is_valid)
-        if not is_valid:
-            return large_value
+                        elif field == SF.GOAL:
+                            is_valid = True
+                    if not is_valid:
+                        dy = -1 if left_field == SF.WALL else 1
+                        for row in range(wall_lim_0 + 1, wall_lim_1 - 1):
+                            field = board.get_field(row, bc + dy)
+                            if field != SF.WALL:
+                                is_valid = True
+                                break
+            # print(is_valid)
+            if not is_valid:
+                return large_value
 
     return heuristic_manhatan(board)
 
