@@ -24,7 +24,8 @@ result, expanded_nodes, remaining_nodes, max_nodes = search_algorithm(
 
 elapsed_time = time.time() - start_time
 
-with open("results/result.txt", "w") as f:
+result_file_name = f'{config['algorithm']}-{config['board']}-drlu.txt'
+with open(f"results/{result_file_name}", "w") as f:
         f.write(config["algorithm"].lower() + ":\n")
         f.write(f"Time taken: {elapsed_time:.6f} seconds\n")
         f.write(f"Expanded frontier nodes: {expanded_nodes}\n")
