@@ -1,4 +1,4 @@
 {
-    "board": "board1",
-    "algorithm": "a*_man"
+    "board": "board3",
+    "algorithm": "dfs"
 }

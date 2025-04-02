@@ -24,7 +24,7 @@ result: Tuple[Node, ...] = search_algorithm(
 
 elapsed_time = time.time() - start_time
 
-with open("result.txt", "w") as f:
+with open("results/result.txt", "w") as f:
         f.write(config["algorithm"].lower() + ":\n")
         f.write(f"Time taken: {elapsed_time:.6f} seconds\n")
         for i, node in enumerate(result):

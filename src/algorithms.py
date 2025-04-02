@@ -1,6 +1,7 @@
 from math import sqrt
 from anytree import Node
 from typing import Sequence, Tuple, Callable
+from collections import deque
 from sortedcontainers import SortedList
 import numpy as np
 
@@ -10,7 +11,10 @@ from src.state import State, Action
 def search_algorithm(
         initial_state: State, actions: Sequence[Action], sort_frontier_function: Callable[[Node], int]
 ) -> Tuple[Node, ...]:
-    # frontier: List[Node] = []
+    if sort_frontier_function == bfs:
+        return _bfs_implementation(initial_state, actions)
+    if sort_frontier_function == dfs:
+        return _dfs_implementation(initial_state, actions)
     frontier: SortedList = SortedList(key=sort_frontier_function)
     root_node = Node(initial_state)
     frontier.add(root_node)
@@ -36,11 +40,62 @@ def search_algorithm(
 
 
 def bfs(node: Node):
-    return len(node.path)
+    return 0
 
 
 def dfs(node: Node):
-    return node.root.height + 1 - len(node.path)
+    return 0
+
+def _bfs_implementation(
+        initial_state: State, actions: Sequence[Action]
+) -> Tuple[Node, ...]:
+    frontier: deque = deque()
+    root_node = Node(initial_state)
+    frontier.append(root_node)
+    visited: set[State] = set()
+
+    while len(frontier) > 0:
+        current_node: Node = frontier.popleft()
+        current_state: State = current_node.name
+
+        visited.add(current_state)
+
+        if current_state.is_goal():
+            return current_node.path
+        for action in actions:
+            if action.can_execute(current_state):
+                new_state = action.execute(current_state)
+                if new_state in visited:
+                    continue
+                new_node = Node(new_state, parent=current_node)
+                frontier.append(new_node)
+    return ()
+
+def _dfs_implementation(
+        initial_state: State, actions: Sequence[Action]
+) -> Tuple[Node, ...]:
+    frontier: deque = deque()
+    root_node = Node(initial_state)
+    frontier.append(root_node)
+    visited: set[State] = set()
+    actions = actions[::-1]
+
+    while len(frontier) > 0:
+        current_node: Node = frontier.popleft()
+        current_state: State = current_node.name
+
+        visited.add(current_state)
+
+        if current_state.is_goal():
+            return current_node.path
+        for action in actions:
+            if action.can_execute(current_state):
+                new_state = action.execute(current_state)
+                if new_state in visited:
+                    continue
+                new_node = Node(new_state, parent=current_node)
+                frontier.appendleft(new_node)
+    return ()
 
 def greedy_man(node: Node):
     return heuristic_manhatan(node.name)
