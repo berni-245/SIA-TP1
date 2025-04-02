@@ -10,7 +10,7 @@ from src.state import State, Action
 
 def search_algorithm(
         initial_state: State, actions: Sequence[Action], sort_frontier_function: Callable[[Node], int]
-) -> Tuple[Node, ...]:
+) -> Tuple[Tuple[Node, ...], int, int, int]:
     if sort_frontier_function == bfs:
         return _bfs_implementation(initial_state, actions)
     if sort_frontier_function == dfs:
@@ -19,15 +19,20 @@ def search_algorithm(
     root_node = Node(initial_state)
     frontier.add(root_node)
     visited: set[State] = set()
+    expanded_nodes = 0
+    max_front_nodes = 0
 
     while len(frontier) > 0:
+        if len(frontier) > max_front_nodes:
+            max_front_nodes = len(frontier)
+
         current_node: Node = frontier.pop(0)
         current_state: State = current_node.name
 
         visited.add(current_state)
 
         if current_state.is_goal():
-            return current_node.path
+            return (current_node.path, expanded_nodes, len(frontier), max_front_nodes)
         for action in actions:
             if action.can_execute(current_state):
                 new_state = action.execute(current_state)
@@ -35,8 +40,8 @@ def search_algorithm(
                     continue
                 new_node = Node(new_state, parent=current_node)
                 frontier.add(new_node)
-
-    return ()
+        expanded_nodes += 1
+    return ((), expanded_nodes, 0, max_front_nodes)
 
 
 def bfs(node: Node):
@@ -48,20 +53,25 @@ def dfs(node: Node):
 
 def _bfs_implementation(
         initial_state: State, actions: Sequence[Action]
-) -> Tuple[Node, ...]:
+) -> Tuple[Tuple[Node, ...], int, int, int]:
     frontier: deque = deque()
     root_node = Node(initial_state)
     frontier.append(root_node)
     visited: set[State] = set()
+    expanded_nodes = 0
+    max_front_nodes = 0
 
     while len(frontier) > 0:
+        if len(frontier) > max_front_nodes:
+            max_front_nodes = len(frontier)
+
         current_node: Node = frontier.popleft()
         current_state: State = current_node.name
 
         visited.add(current_state)
 
         if current_state.is_goal():
-            return current_node.path
+            return (current_node.path, expanded_nodes, len(frontier), max_front_nodes)
         for action in actions:
             if action.can_execute(current_state):
                 new_state = action.execute(current_state)
@@ -69,25 +79,31 @@ def _bfs_implementation(
                     continue
                 new_node = Node(new_state, parent=current_node)
                 frontier.append(new_node)
-    return ()
+        expanded_nodes += 1
+    return ((), expanded_nodes, 0, max_front_nodes)
 
 def _dfs_implementation(
         initial_state: State, actions: Sequence[Action]
-) -> Tuple[Node, ...]:
+) -> Tuple[Tuple[Node, ...], int, int, int]:
     frontier: deque = deque()
     root_node = Node(initial_state)
     frontier.append(root_node)
     visited: set[State] = set()
     actions = actions[::-1]
+    expanded_nodes = 0
+    max_front_nodes = 0
 
     while len(frontier) > 0:
+        if len(frontier) > max_front_nodes:
+            max_front_nodes = len(frontier)
+
         current_node: Node = frontier.popleft()
         current_state: State = current_node.name
 
         visited.add(current_state)
 
         if current_state.is_goal():
-            return current_node.path
+            return (current_node.path, expanded_nodes, len(frontier), max_front_nodes)
         for action in actions:
             if action.can_execute(current_state):
                 new_state = action.execute(current_state)
@@ -95,7 +111,8 @@ def _dfs_implementation(
                     continue
                 new_node = Node(new_state, parent=current_node)
                 frontier.appendleft(new_node)
-    return ()
+        expanded_nodes += 1
+    return ((), expanded_nodes, 0, max_front_nodes)
 
 def greedy_man(node: Node):
     return heuristic_manhatan(node.name)

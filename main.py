@@ -16,7 +16,7 @@ with open("boards/"+ config["board"] + ".txt", "r") as f:
 
 start_time = time.time()
 
-result: Tuple[Node, ...] = search_algorithm(
+result, expanded_nodes, remaining_nodes, max_nodes = search_algorithm(
     SokobanBoard.board_builder(board_string),
     [SokobanAction.UP, SokobanAction.DOWN, SokobanAction.LEFT, SokobanAction.RIGHT],
     algorithms[config["algorithm"].lower()]
@@ -27,6 +27,9 @@ elapsed_time = time.time() - start_time
 with open("results/result.txt", "w") as f:
         f.write(config["algorithm"].lower() + ":\n")
         f.write(f"Time taken: {elapsed_time:.6f} seconds\n")
+        f.write(f"Expanded frontier nodes: {expanded_nodes}\n")
+        f.write(f"Remaining frontier nodes: {remaining_nodes}\n")
+        f.write(f"Max frontier nodes: {max_nodes}\n")
         for i, node in enumerate(result):
             f.write(f"step: {i}\n")
             f.write(f"{node.name}\n\n")
