@@ -300,8 +300,8 @@ algorithms = {
     "greedy_man": greedy_man,
     "greedy_no_corners": greedy_corners,
     "greedy_no_dead": greedy_no_dead,
-    "a*_euc": a_star_euclidean,
-    "a*_man": a_star_manhatan,
-    "a*_no_corners": a_star_manhatan_corners,
-    "a*_no_dead": a_star_manhatan_no_dead,
+    "a_star_euc": a_star_euclidean,
+    "a_star_man": a_star_manhatan,
+    "a_star_no_corners": a_star_manhatan_corners,
+    "a_star_no_dead": a_star_manhatan_no_dead,
 }

@@ -33,9 +33,9 @@ para instalar las dependencias necesarias en el ambiente virtual
 
 ## Ejecución
 
-Para correr el algoritmo deseado sobre el sokoban modificar la [configuración](configs/config.json), especificando el método de búsqueda deseado (BFS, DFS, Greedy_\<heuristic>, A*_\<heuristic>), el board (board1, board2, board3, board4)
-Para el caso de greedy y a* **hay** que reemplazar \<heuristic> por una de las siguientes opciones (euc/man/no_corners/no_dead)
+Para correr el algoritmo deseado sobre el sokoban modificar la [configuración](configs/config.json), especificando el método de búsqueda deseado (BFS, DFS, Greedy_\<heuristic>, A_star_\<heuristic>), el board (board1, board2, ..., board9)
+Para el caso de greedy y a_star **hay** que reemplazar \<heuristic> por una de las siguientes opciones (euc/man/no_corners/no_dead)
 ```sh
-pipenv run python src/main.py
+pipenv run python main.py
 ```
-Se guardará el resultado en `result.txt`
+Se guardará el resultado en la carpeta `result.txt`
