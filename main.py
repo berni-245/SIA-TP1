@@ -15,7 +15,7 @@ with open("boards/"+ config["board"] + ".txt", "r") as f:
     board_string = f.read()
 
 start_time = time.time()
-actions = [SokobanAction.DOWN, SokobanAction.RIGHT, SokobanAction.LEFT, SokobanAction.UP]
+actions = [SokobanAction.UP, SokobanAction.DOWN, SokobanAction.LEFT, SokobanAction.RIGHT]
 result, expanded_nodes, remaining_nodes, max_nodes = search_algorithm(
     SokobanBoard.board_builder(board_string),
     actions,
@@ -24,7 +24,7 @@ result, expanded_nodes, remaining_nodes, max_nodes = search_algorithm(
 
 elapsed_time = time.time() - start_time
 actions_str = "".join([str(a)[0].lower() for a in  actions])
-result_file_name = f"{config['algorithm']}-{config['board']}-{actions_str}.txt"
+result_file_name = f"{config['board']}-{config['algorithm']}-{actions_str}.txt"
 with open(f"results/{result_file_name}", "w") as f:
         f.write(config["algorithm"].lower() + ":\n")
         f.write(f"Time taken: {elapsed_time:.6f} seconds\n")
