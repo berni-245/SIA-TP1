@@ -38,4 +38,10 @@ Para el caso de greedy y a_star **hay** que reemplazar \<heuristic> por una de l
 ```sh
 pipenv run python main.py
 ```
-Se guardará el resultado en la carpeta `result.txt`
+Se guardará el resultado en la carpeta [`results`](/results/)
+
+Para abrir el JupyterLab donde se realizaron las pruebas simplemente correr el comando
+
+```sh
+pipenv run jupyter lab
+```
