@@ -45,3 +45,4 @@ Para abrir el JupyterLab donde se realizaron las pruebas simplemente correr el c
 ```sh
 pipenv run jupyter lab
 ```
+Finalmente, abrir el archivo `analysis.ipynb`
