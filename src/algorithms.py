@@ -45,11 +45,11 @@ def search_algorithm(
 
 
 def bfs(node: Node):
-    return 0
+    return 0 # empty function used only to keep the search_algorithm api generic
 
 
 def dfs(node: Node):
-    return 0
+    return 0 # empty function used only to keep the search_algorithm api generic
 
 def _bfs_implementation(
         initial_state: State, actions: Sequence[Action]
@@ -204,10 +204,6 @@ def heuristic_no_dead(board: SokobanBoard) -> int:
             down_field = board.get_field(br + 1, bc)
             left_field = board.get_field(br, bc - 1)
             right_field = board.get_field(br, bc + 1)
-            # print('up', up_field)
-            # print('down', down_field)
-            # print('left', left_field)
-            # print('right', right_field)
             if up_field == SF.WALL and (left_field == SF.WALL or right_field == SF.WALL):
                 return large_value
             elif  down_field == SF.WALL and (left_field == SF.WALL or right_field == SF.WALL):
@@ -237,11 +233,8 @@ def heuristic_no_dead(board: SokobanBoard) -> int:
                             break
                         elif field == SF.GOAL:
                             is_valid = True
-                    # print('lims: ', wall_lim_0, wall_lim_1)
-                    # print('valid: ', is_valid)
                     if not is_valid:
                         dy = -1 if up_field == SF.WALL else 1
-                        # print('dy', dy)
                         for col in range(wall_lim_0 + 1, wall_lim_1 - 1):
                             field = board.get_field(br + dy, col)
                             if field != SF.WALL:
@@ -275,7 +268,6 @@ def heuristic_no_dead(board: SokobanBoard) -> int:
                             if field != SF.WALL:
                                 is_valid = True
                                 break
-            # print(is_valid)
             if not is_valid:
                 return large_value
 
